@@ -8,8 +8,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const ferrum_plumbing_1 = require("ferrum-plumbing");
+const cross_fetch_1 = __importDefault(require("cross-fetch"));
 class ServerApiHeaders {
 }
 exports.ServerApiHeaders = ServerApiHeaders;
@@ -105,7 +109,7 @@ class ServerApi {
                 }
                 this.log.debug('Headers are', headers);
                 // @ts-ignore
-                res = yield fetch(this.host + fullCommand, {
+                res = yield cross_fetch_1.default(this.host + fullCommand, {
                     method: method,
                     headers: headers,
                     body: JSON.stringify(data),

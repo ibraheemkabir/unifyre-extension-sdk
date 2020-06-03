@@ -25,6 +25,7 @@
   },
   "homepage": "https://github.com/ferrumnet/unifyre-extension-sdk#readme",
   "dependencies": {
+    "cross-fetch": "^3.0.4",
     "ferrum-plumbing": "git+https://github.com/ferrumnet/ferrum-plumbing.git"
   },
   "devDependencies": {

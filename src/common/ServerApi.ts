@@ -1,4 +1,5 @@
 import {Injectable, JsonStorage, Logger, LoggerFactory, ValidationUtils} from "ferrum-plumbing";
+import fetch from "cross-fetch";
 import {AuthenticationContext} from "./AuthenticationContext";
 
 export class ServerApiHeaders {
