@@ -38,6 +38,26 @@ class UnifyreExtensionKitClient {
         ferrum_plumbing_1.ValidationUtils.isTrue(!!this._userProfile, 'You must first sign in');
         return this._userProfile;
     }
+    createLinkObject(linkObject) {
+        return __awaiter(this, void 0, void 0, function* () {
+            ferrum_plumbing_1.ValidationUtils.isTrue(!!linkObject, '"linkObject" must be provided');
+            ferrum_plumbing_1.ValidationUtils.isTrue(!!linkObject.data && typeof linkObject.data === 'object', '"linkObject.data" must be provided and be an object');
+            ferrum_plumbing_1.ValidationUtils.isTrue(!!linkObject.message, '"message" must be provided');
+            ferrum_plumbing_1.ValidationUtils.isTrue(!!linkObject.imageMainLine, '"imageMainLine" must be provided');
+            ferrum_plumbing_1.ValidationUtils.isTrue(!!linkObject.imageSecondLine, '"imageSecondLinke" must be provided');
+            const res = yield this.api.post(`extensions/createLink`, Object.assign(Object.assign({}, linkObject), { appId: this.appId }));
+            ferrum_plumbing_1.ValidationUtils.isTrue(!!res && !!res.objectId, "Error creating link. Unsuccessful");
+            return res.objectId;
+        });
+    }
+    getLinkObject(linkId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            ferrum_plumbing_1.ValidationUtils.isTrue(!!linkId, '"linkId" must be provided');
+            const res = yield this.api.get(`extensions/getLink/${linkId}`, {});
+            ferrum_plumbing_1.ValidationUtils.isTrue(!!res, "Error getting link. Unsuccessful");
+            return res;
+        });
+    }
     sendMoney(toAddress, currency, amount, accountGroupId) {
         return __awaiter(this, void 0, void 0, function* () {
             const prof = this.getUserProfile();
@@ -57,10 +77,11 @@ class UnifyreExtensionKitClient {
             return res.data;
         });
     }
-    sign(network, messageHex, messageType, description, accountGroupId) {
+    sign(network, messageHex, messageType, gasLimit, description, accountGroupId) {
         return __awaiter(this, void 0, void 0, function* () {
             ferrum_plumbing_1.ValidationUtils.isTrue(!!messageHex, '"message" must be provided');
             ferrum_plumbing_1.ValidationUtils.isTrue(SignableMessages_1.SIGNABLE_MESSAGE_TYPES.has(messageType), 'Invalid "messageType"');
+            ferrum_plumbing_1.ValidationUtils.isTrue(messageType !== 'CUSTOM_TRANSACTION' || !!gasLimit, '"gasLimit" is requried for custom transactions');
             const prof = this.getUserProfile();
             const res = yield this.walletProxy.call(this.appId, {
                 command: messageType === 'PLAIN_TEXT' ? 'REQUEST_SIGN_CLEAN_MESSAGE' : 'REQUEST_SIGN_CUSTOM_MESSAGE',

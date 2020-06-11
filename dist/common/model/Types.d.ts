@@ -2,7 +2,7 @@ import { HexString } from "ferrum-plumbing";
 export interface SendMoneyResponse {
     transactionId: string;
 }
-export interface SignedMessageResponse {
+export interface SignedRawDataResponse {
     signature: {
         r: HexString;
         s: HexString;
@@ -10,4 +10,5 @@ export interface SignedMessageResponse {
     };
     publicKeyHex: HexString;
 }
+export declare type SignedMessageResponse = SignedRawDataResponse | SendMoneyResponse;
 //# sourceMappingURL=Types.d.ts.map

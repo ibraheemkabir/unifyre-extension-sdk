@@ -1,1 +1,1 @@
-{"version":3,"file":"SignableMessages.d.ts","sourceRoot":"","sources":["../../../src/common/model/SignableMessages.ts"],"names":[],"mappings":"AACA,oBAAY,mBAAmB,GAAG,YAAY,GAAG,oBAAoB,CAAC;AACtE,eAAO,MAAM,sBAAsB,0BAAqE,CAAC"}
+{"version":3,"file":"SignableMessages.d.ts","sourceRoot":"","sources":["../../../src/common/model/SignableMessages.ts"],"names":[],"mappings":"AACA,oBAAY,mBAAmB,GAAG,YAAY,GAAG,oBAAoB,GAAG,aAAa,CAAC;AACtF,eAAO,MAAM,sBAAsB,0BACqB,CAAC"}

@@ -54,6 +54,17 @@ class WalletRemoteRequestClient {
             return res.redirectUrl;
         });
     }
+    getAppLinkFromLinkId(linkId, walletAccountGroupId, walletCurrency) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const res = yield this.api.post(`extension/appSignInRedirectFromLink`, {
+                linkId, walletAccountGroupId, walletCurrency
+            });
+            if (!res) {
+                return undefined;
+            }
+            return res.redirectUrl;
+        });
+    }
 }
 exports.WalletRemoteRequestClient = WalletRemoteRequestClient;
 //# sourceMappingURL=WalletRemoteRequestClient.js.map
