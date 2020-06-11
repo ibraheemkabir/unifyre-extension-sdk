@@ -38,4 +38,11 @@ export class WalletRemoteRequestClient implements Injectable {
     if (!res) { return undefined; }
     return res.redirectUrl;
   }
+
+  async getAppLinkFromLinkId(linkId: string, walletAccountGroupId?: string, walletCurrency?: string): Promise<string | undefined> {
+    const res =  await this.api.post(`extension/appSignInRedirectFromLink`, {
+      linkId, walletAccountGroupId, walletCurrency }) as any;
+    if (!res) { return undefined; }
+    return res.redirectUrl;
+  }
 }
