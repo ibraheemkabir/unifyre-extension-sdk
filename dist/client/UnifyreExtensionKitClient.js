@@ -28,6 +28,11 @@ class UnifyreExtensionKitClient {
         this.appId = appId;
     }
     __name__() { return 'UnifyreExtensionKitClient'; }
+    setToken(token) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.api.setBearerToken(token);
+        });
+    }
     signInWithToken(token) {
         return __awaiter(this, void 0, void 0, function* () {
             yield this.api.setBearerToken(token);

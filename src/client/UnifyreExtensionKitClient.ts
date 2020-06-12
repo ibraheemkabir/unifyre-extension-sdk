@@ -27,6 +27,10 @@ export class UnifyreExtensionKitClient implements Injectable {
 
   __name__(): string { return 'UnifyreExtensionKitClient'; }
 
+  async setToken(token: string) {
+    await this.api.setBearerToken(token);
+  }
+
   async signInWithToken(token: string) {
     await this.api.setBearerToken(token);
     this._userProfile = await this.api.get('extension/userProfile', {}) as AppUserProfile

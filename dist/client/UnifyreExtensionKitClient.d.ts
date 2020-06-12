@@ -12,6 +12,7 @@ export declare class UnifyreExtensionKitClient implements Injectable {
     private _userProfile;
     constructor(api: ServerApi, walletProxy: WalletJsonRpcClient, appId: string);
     __name__(): string;
+    setToken(token: string): Promise<void>;
     signInWithToken(token: string): Promise<void>;
     getUserProfile(): AppUserProfile;
     createLinkObject<T>(linkObject: AppLinkRequest<T>): Promise<string>;
