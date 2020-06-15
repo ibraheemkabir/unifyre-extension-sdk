@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const ferrum_plumbing_1 = require("ferrum-plumbing");
 const SignableMessages_1 = require("../common/model/SignableMessages");
 function getAddressForCurrency(prof, currency, accountGroupId) {
+    var _a;
     if (prof.accountGroups.length === 0) {
         return undefined;
     }
@@ -19,7 +20,7 @@ function getAddressForCurrency(prof, currency, accountGroupId) {
     if (!ag) {
         return undefined;
     }
-    return (ag.addresses[currency] || {}).address;
+    return (_a = ag.addresses.find(a => a.currency === currency)) === null || _a === void 0 ? void 0 : _a.address;
 }
 class UnifyreExtensionKitClient {
     constructor(api, walletProxy, appId) {

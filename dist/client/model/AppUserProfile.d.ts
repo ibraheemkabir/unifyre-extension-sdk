@@ -2,6 +2,7 @@ import { Network } from "ferrum-plumbing";
 export interface AddressDetails {
     network: Network;
     currency: string;
+    symbol: string;
     address: string;
     addressWithChecksum?: string;
     humanReadableAddress: string;
@@ -12,9 +13,7 @@ export interface AddressDetails {
 }
 export interface UserAccountGroup {
     id: string;
-    addresses: {
-        [key: string]: AddressDetails;
-    };
+    addresses: AddressDetails[];
 }
 export interface AppUserProfile {
     userId: string;

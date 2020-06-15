@@ -14,7 +14,7 @@ function getAddressForCurrency(prof: AppUserProfile, currency: string, accountGr
   if (!ag) {
     return undefined;
   }
-  return (ag.addresses[currency] || {} as any).address;
+  return ag.addresses.find(a => a.currency === currency)?.address;
 }
 
 export class UnifyreExtensionKitClient implements Injectable {
