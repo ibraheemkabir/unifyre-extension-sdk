@@ -51,7 +51,7 @@ class UnifyreExtensionKitClient {
             ferrum_plumbing_1.ValidationUtils.isTrue(!!linkObject.imageMainLine, '"imageMainLine" must be provided');
             ferrum_plumbing_1.ValidationUtils.isTrue(!!linkObject.imageSecondLine, '"imageSecondLinke" must be provided');
             const res = yield this.api.post(`extension/createLink`, Object.assign(Object.assign({}, linkObject), { appId: this.appId }));
-            ferrum_plumbing_1.ValidationUtils.isTrue(!!res && !!res.objectId, "Error creating link. Unsuccessful");
+            ferrum_plumbing_1.ValidationUtils.isTrue(!!res && !!(res.data || {}).objectId, "Error creating link. Unsuccessful");
             return res.objectId;
         });
     }
