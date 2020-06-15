@@ -50,7 +50,7 @@ class UnifyreExtensionKitClient {
             ferrum_plumbing_1.ValidationUtils.isTrue(!!linkObject.message, '"message" must be provided');
             ferrum_plumbing_1.ValidationUtils.isTrue(!!linkObject.imageMainLine, '"imageMainLine" must be provided');
             ferrum_plumbing_1.ValidationUtils.isTrue(!!linkObject.imageSecondLine, '"imageSecondLinke" must be provided');
-            const res = yield this.api.post(`extensions/createLink`, Object.assign(Object.assign({}, linkObject), { appId: this.appId }));
+            const res = yield this.api.post(`extension/createLink`, Object.assign(Object.assign({}, linkObject), { appId: this.appId }));
             ferrum_plumbing_1.ValidationUtils.isTrue(!!res && !!res.objectId, "Error creating link. Unsuccessful");
             return res.objectId;
         });
@@ -58,7 +58,7 @@ class UnifyreExtensionKitClient {
     getLinkObject(linkId) {
         return __awaiter(this, void 0, void 0, function* () {
             ferrum_plumbing_1.ValidationUtils.isTrue(!!linkId, '"linkId" must be provided');
-            const res = yield this.api.get(`extensions/getLink/${linkId}`, {});
+            const res = yield this.api.get(`extension/getLink/${linkId}`, {});
             ferrum_plumbing_1.ValidationUtils.isTrue(!!res, "Error getting link. Unsuccessful");
             return res;
         });
@@ -105,7 +105,7 @@ class UnifyreExtensionKitClient {
     }
     getTransaction(transactionId) {
         return __awaiter(this, void 0, void 0, function* () {
-            return this.api.get(`extensions/transaction/${transactionId}`, {});
+            return this.api.get(`extension/transaction/${transactionId}`, {});
         });
     }
 }

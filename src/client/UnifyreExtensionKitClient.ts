@@ -48,14 +48,14 @@ export class UnifyreExtensionKitClient implements Injectable {
     ValidationUtils.isTrue(!!linkObject.message, '"message" must be provided');
     ValidationUtils.isTrue(!!linkObject.imageMainLine, '"imageMainLine" must be provided');
     ValidationUtils.isTrue(!!linkObject.imageSecondLine, '"imageSecondLinke" must be provided');
-    const res = await this.api.post(`extensions/createLink`, {...linkObject, appId: this.appId}) as any;
+    const res = await this.api.post(`extension/createLink`, {...linkObject, appId: this.appId}) as any;
     ValidationUtils.isTrue(!!res && !!res.objectId, "Error creating link. Unsuccessful");
     return res.objectId;
   }
 
   async getLinkObject<T>(linkId: string) {
     ValidationUtils.isTrue(!!linkId, '"linkId" must be provided');
-    const res = await this.api.get(`extensions/getLink/${linkId}`, {}) as T;
+    const res = await this.api.get(`extension/getLink/${linkId}`, {}) as T;
     ValidationUtils.isTrue(!!res, "Error getting link. Unsuccessful");
     return res;
   }
@@ -105,6 +105,6 @@ export class UnifyreExtensionKitClient implements Injectable {
   }
 
   async getTransaction(transactionId: string): Promise<any> {
-    return this.api.get(`extensions/transaction/${transactionId}`, {});
+    return this.api.get(`extension/transaction/${transactionId}`, {});
   }
 }
