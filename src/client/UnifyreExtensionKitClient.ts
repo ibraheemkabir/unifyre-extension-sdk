@@ -50,7 +50,7 @@ export class UnifyreExtensionKitClient implements Injectable {
     ValidationUtils.isTrue(!!linkObject.imageSecondLine, '"imageSecondLinke" must be provided');
     const res = await this.api.post(`extension/createLink`, {...linkObject, appId: this.appId}) as any;
     ValidationUtils.isTrue(!!res && !!(res.data || {}).objectId, "Error creating link. Unsuccessful");
-    return res.objectId;
+    return res.data.objectId;
   }
 
   async getLinkObject<T>(linkId: string) {
