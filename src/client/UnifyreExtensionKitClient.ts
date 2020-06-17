@@ -84,13 +84,17 @@ export class UnifyreExtensionKitClient implements Injectable {
   }
 
   async sendTransaction(network: Network,
-             transaction: any,
-             gasLimit: string,
+             transactions: {transaction: any,
+             gasLimit: string}[],
              description?: string): Promise<SendMoneyResponse> {
     ValidationUtils.isTrue(!!this.requestSigner, "'requestSigner' must be provided");
     ValidationUtils.isTrue(!!network, '"network" must be provided');
-    ValidationUtils.isTrue(!!transaction, '"transaction" must be provided');
-    ValidationUtils.isTrue(!!gasLimit, '"gasLimit" must be provided');
+    ValidationUtils.isTrue(!!transactions && !!transactions.length, '"trasactions" must be provided');
+    transactions.forEach(t => {
+      const {transaction, gasLimit} = t;
+      ValidationUtils.isTrue(!!transaction, '"transaction" must be provided');
+      ValidationUtils.isTrue(!!gasLimit, '"gasLimit" must be provided');
+    });
     const prof = this.getUserProfile();
     const req = {
       command: 'REQUEST_SIGN_CUSTOM_TRANSACTION',
@@ -98,9 +102,8 @@ export class UnifyreExtensionKitClient implements Injectable {
         network,
         userId: prof.userId,
         appId: prof.appId,
-        transaction,
+        transactions,
         description,
-        gasLimit,
       } as any,
     } as JsonRpcRequest;
     const signedReq = this.requestSigner!.signProxyRequest(req);
