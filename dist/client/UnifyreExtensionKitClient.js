@@ -23,10 +23,11 @@ function getAddressForCurrency(prof, currency, accountGroupId) {
     return (_a = ag.addresses.find(a => a.currency === currency)) === null || _a === void 0 ? void 0 : _a.address;
 }
 class UnifyreExtensionKitClient {
-    constructor(api, walletProxy, appId) {
+    constructor(api, walletProxy, appId, requestSigner) {
         this.api = api;
         this.walletProxy = walletProxy;
         this.appId = appId;
+        this.requestSigner = requestSigner;
     }
     __name__() { return 'UnifyreExtensionKitClient'; }
     setToken(token) {
@@ -66,9 +67,10 @@ class UnifyreExtensionKitClient {
     }
     sendMoney(toAddress, currency, amount, accountGroupId) {
         return __awaiter(this, void 0, void 0, function* () {
+            ferrum_plumbing_1.ValidationUtils.isTrue(!!this.requestSigner, "'requestSigner' must be provided");
             const prof = this.getUserProfile();
             const fromAddress = getAddressForCurrency(prof, currency, accountGroupId);
-            const res = yield this.walletProxy.call(this.appId, {
+            const req = {
                 command: 'REQUEST_SEND_MONEY',
                 data: {
                     userId: prof.userId,
@@ -79,17 +81,42 @@ class UnifyreExtensionKitClient {
                     amount,
                     accountGroupId,
                 },
-            });
+            };
+            const signedReq = this.requestSigner.signProxyRequest(req);
+            const res = yield this.walletProxy.call(this.appId, signedReq);
             return res.data;
         });
     }
-    sign(network, messageHex, messageType, gasLimit, description, accountGroupId) {
+    sendTransaction(network, transaction, gasLimit, description) {
         return __awaiter(this, void 0, void 0, function* () {
+            ferrum_plumbing_1.ValidationUtils.isTrue(!!this.requestSigner, "'requestSigner' must be provided");
+            ferrum_plumbing_1.ValidationUtils.isTrue(!!network, '"network" must be provided');
+            ferrum_plumbing_1.ValidationUtils.isTrue(!!transaction, '"transaction" must be provided');
+            ferrum_plumbing_1.ValidationUtils.isTrue(!!gasLimit, '"gasLimit" must be provided');
+            const prof = this.getUserProfile();
+            const req = {
+                command: 'REQUEST_SIGN_CUSTOM_TRANSACTION',
+                data: {
+                    network,
+                    userId: prof.userId,
+                    appId: prof.appId,
+                    transaction,
+                    description,
+                    gasLimit,
+                },
+            };
+            const signedReq = this.requestSigner.signProxyRequest(req);
+            const res = yield this.walletProxy.call(this.appId, signedReq);
+            return res.data;
+        });
+    }
+    sign(network, messageHex, messageType, description, accountGroupId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            ferrum_plumbing_1.ValidationUtils.isTrue(!!this.requestSigner, "'requestSigner' must be provided");
             ferrum_plumbing_1.ValidationUtils.isTrue(!!messageHex, '"message" must be provided');
             ferrum_plumbing_1.ValidationUtils.isTrue(SignableMessages_1.SIGNABLE_MESSAGE_TYPES.has(messageType), 'Invalid "messageType"');
-            ferrum_plumbing_1.ValidationUtils.isTrue(messageType !== 'CUSTOM_TRANSACTION' || !!gasLimit, '"gasLimit" is requried for custom transactions');
             const prof = this.getUserProfile();
-            const res = yield this.walletProxy.call(this.appId, {
+            const req = {
                 command: messageType === 'PLAIN_TEXT' ? 'REQUEST_SIGN_CLEAN_MESSAGE' : 'REQUEST_SIGN_CUSTOM_MESSAGE',
                 data: {
                     network,
@@ -100,7 +127,9 @@ class UnifyreExtensionKitClient {
                     messageType,
                     description,
                 },
-            });
+            };
+            const signedReq = this.requestSigner.signProxyRequest(req);
+            const res = yield this.walletProxy.call(this.appId, signedReq);
             return res.data;
         });
     }
