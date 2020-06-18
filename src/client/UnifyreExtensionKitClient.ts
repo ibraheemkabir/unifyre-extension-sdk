@@ -1,9 +1,8 @@
-import {HexString, Injectable, JsonRpcRequest, Network, ValidationUtils} from "ferrum-plumbing";
+import {Injectable, JsonRpcRequest, Network, ValidationUtils} from "ferrum-plumbing";
 import {ServerApi} from "../common/ServerApi";
 import {WalletJsonRpcClient} from "./WalletJsonRpcClient";
 import {AppUserProfile} from "./model/AppUserProfile";
-import {SIGNABLE_MESSAGE_TYPES, SignableMessageType} from "../common/model/SignableMessages";
-import {SendMoneyResponse, SignedMessageResponse, CustomTransactionCallRequest} from "../common/model/Types";
+import {SendMoneyResponse, CustomTransactionCallRequest} from "../common/model/Types";
 import { AppLinkRequest } from "./model/AppLink";
 import { RequestSigner } from "src/crypto/RequestSigner";
 
@@ -62,7 +61,7 @@ export class UnifyreExtensionKitClient implements Injectable {
     return res;
   }
 
-  async sendMoney(toAddress: string, currency: string, amount: string, accountGroupId?: string): Promise<SendMoneyResponse> {
+  async sendMoneyAsync(toAddress: string, currency: string, amount: string, accountGroupId?: string): Promise<string> {
     ValidationUtils.isTrue(!!this.requestSigner, "'requestSigner' must be provided");
     const prof = this.getUserProfile();
     const fromAddress = getAddressForCurrency(prof, currency, accountGroupId);
@@ -79,12 +78,16 @@ export class UnifyreExtensionKitClient implements Injectable {
       } as any,
     } as JsonRpcRequest;
     const signedReq = this.requestSigner!.signProxyRequest(req);
-    const res = await this.walletProxy.call(this.appId, signedReq);
+    return await this.walletProxy.callAsync(signedReq);
+  }
+
+  async getSendMoneyResponse(requestId: string) {
+    const res = await this.walletProxy.waitForResponse(requestId);
     return res.data as SendMoneyResponse;
   }
 
-  async sendTransaction(network: Network,
-             transactions: CustomTransactionCallRequest[],): Promise<SendMoneyResponse[]> {
+  async sendTransactionAsync(network: Network,
+             transactions: CustomTransactionCallRequest[],): Promise<string> {
     ValidationUtils.isTrue(!!this.requestSigner, "'requestSigner' must be provided");
     ValidationUtils.isTrue(!!network, '"network" must be provided');
     ValidationUtils.isTrue(!!transactions && !!transactions.length, '"trasactions" must be provided');
@@ -102,35 +105,39 @@ export class UnifyreExtensionKitClient implements Injectable {
       } as any,
     } as JsonRpcRequest;
     const signedReq = this.requestSigner!.signProxyRequest(req);
-    const res = await this.walletProxy.call(this.appId, signedReq);
+    return await this.walletProxy.callAsync(signedReq);
+  }
+
+  async getSendTransactionResponse(requestId: string): Promise<SendMoneyResponse[]> {
+    const res = await this.walletProxy.waitForResponse(requestId);
     return res.data as SendMoneyResponse[];
   }
 
-  async sign(network: Network,
-             messageHex: HexString,
-             messageType: SignableMessageType,
-             description?: string,
-             accountGroupId?: string): Promise<SignedMessageResponse> {
-    ValidationUtils.isTrue(!!this.requestSigner, "'requestSigner' must be provided");
-    ValidationUtils.isTrue(!!messageHex, '"message" must be provided');
-    ValidationUtils.isTrue(SIGNABLE_MESSAGE_TYPES.has(messageType), 'Invalid "messageType"');
-    const prof = this.getUserProfile();
-    const req = {
-      command: messageType === 'PLAIN_TEXT' ? 'REQUEST_SIGN_CLEAN_MESSAGE' : 'REQUEST_SIGN_CUSTOM_MESSAGE',
-      data: {
-        network,
-        userId: prof.userId,
-        appId: prof.appId,
-        accountGroupId,
-        messageHex,
-        messageType,
-        description,
-      } as any,
-    } as JsonRpcRequest;
-    const signedReq = this.requestSigner!.signProxyRequest(req);
-    const res = await this.walletProxy.call(this.appId, signedReq);
-    return res.data as SignedMessageResponse;
-  }
+  // async sign(network: Network,
+  //            messageHex: HexString,
+  //            messageType: SignableMessageType,
+  //            description?: string,
+  //            accountGroupId?: string): Promise<SignedMessageResponse> {
+  //   ValidationUtils.isTrue(!!this.requestSigner, "'requestSigner' must be provided");
+  //   ValidationUtils.isTrue(!!messageHex, '"message" must be provided');
+  //   ValidationUtils.isTrue(SIGNABLE_MESSAGE_TYPES.has(messageType), 'Invalid "messageType"');
+  //   const prof = this.getUserProfile();
+  //   const req = {
+  //     command: messageType === 'PLAIN_TEXT' ? 'REQUEST_SIGN_CLEAN_MESSAGE' : 'REQUEST_SIGN_CUSTOM_MESSAGE',
+  //     data: {
+  //       network,
+  //       userId: prof.userId,
+  //       appId: prof.appId,
+  //       accountGroupId,
+  //       messageHex,
+  //       messageType,
+  //       description,
+  //     } as any,
+  //   } as JsonRpcRequest;
+  //   const signedReq = this.requestSigner!.signProxyRequest(req);
+  //   const res = await this.walletProxy.call(this.appId, signedReq);
+  //   return res.data as SignedMessageResponse;
+  // }
 
   async getTransaction(transactionId: string): Promise<any> {
     return this.api.get(`extension/transaction/${transactionId}`, {});
