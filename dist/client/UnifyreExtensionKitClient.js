@@ -87,15 +87,13 @@ class UnifyreExtensionKitClient {
             return res.data;
         });
     }
-    sendTransaction(network, transactions, description) {
+    sendTransaction(network, transactions) {
         return __awaiter(this, void 0, void 0, function* () {
             ferrum_plumbing_1.ValidationUtils.isTrue(!!this.requestSigner, "'requestSigner' must be provided");
             ferrum_plumbing_1.ValidationUtils.isTrue(!!network, '"network" must be provided');
             ferrum_plumbing_1.ValidationUtils.isTrue(!!transactions && !!transactions.length, '"trasactions" must be provided');
             transactions.forEach(t => {
-                const { transaction, gasLimit } = t;
-                ferrum_plumbing_1.ValidationUtils.isTrue(!!transaction, '"transaction" must be provided');
-                ferrum_plumbing_1.ValidationUtils.isTrue(!!gasLimit, '"gasLimit" must be provided');
+                ferrum_plumbing_1.ValidationUtils.isTrue(!!t.gas && !!t.gas.gasLimit, '"gasLimit" must be provided');
             });
             const prof = this.getUserProfile();
             const req = {
@@ -105,7 +103,6 @@ class UnifyreExtensionKitClient {
                     userId: prof.userId,
                     appId: prof.appId,
                     transactions,
-                    description,
                 },
             };
             const signedReq = this.requestSigner.signProxyRequest(req);

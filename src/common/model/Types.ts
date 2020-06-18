@@ -7,6 +7,7 @@ export interface GasParameters {
 
 export interface CustomTransactionCallRequest {
   from: string;
+  currency: string;
   contract: string;
   amount: string;
   data: string;

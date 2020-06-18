@@ -3,7 +3,7 @@ import {ServerApi} from "../common/ServerApi";
 import {WalletJsonRpcClient} from "./WalletJsonRpcClient";
 import {AppUserProfile} from "./model/AppUserProfile";
 import {SIGNABLE_MESSAGE_TYPES, SignableMessageType} from "../common/model/SignableMessages";
-import {SendMoneyResponse, SignedMessageResponse} from "../common/model/Types";
+import {SendMoneyResponse, SignedMessageResponse, CustomTransactionCallRequest} from "../common/model/Types";
 import { AppLinkRequest } from "./model/AppLink";
 import { RequestSigner } from "src/crypto/RequestSigner";
 
@@ -84,16 +84,12 @@ export class UnifyreExtensionKitClient implements Injectable {
   }
 
   async sendTransaction(network: Network,
-             transactions: {transaction: any,
-             gasLimit: string}[],
-             description?: string): Promise<SendMoneyResponse> {
+             transactions: CustomTransactionCallRequest[],): Promise<SendMoneyResponse> {
     ValidationUtils.isTrue(!!this.requestSigner, "'requestSigner' must be provided");
     ValidationUtils.isTrue(!!network, '"network" must be provided');
     ValidationUtils.isTrue(!!transactions && !!transactions.length, '"trasactions" must be provided');
     transactions.forEach(t => {
-      const {transaction, gasLimit} = t;
-      ValidationUtils.isTrue(!!transaction, '"transaction" must be provided');
-      ValidationUtils.isTrue(!!gasLimit, '"gasLimit" must be provided');
+      ValidationUtils.isTrue(!!t.gas && !!t.gas.gasLimit, '"gasLimit" must be provided');
     });
     const prof = this.getUserProfile();
     const req = {
@@ -103,7 +99,6 @@ export class UnifyreExtensionKitClient implements Injectable {
         userId: prof.userId,
         appId: prof.appId,
         transactions,
-        description,
       } as any,
     } as JsonRpcRequest;
     const signedReq = this.requestSigner!.signProxyRequest(req);
