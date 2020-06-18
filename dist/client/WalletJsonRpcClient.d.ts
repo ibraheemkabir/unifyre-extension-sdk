@@ -1,4 +1,4 @@
-import { Injectable, JsonRpcRequest, JsonRpcResponse } from "ferrum-plumbing";
+import { Injectable, JsonRpcRequest } from "ferrum-plumbing";
 import { ServerApi } from "../common/ServerApi";
 import { AsyncRequestRepeater } from "./AsyncRequestRepeater";
 export declare class WalletJsonRpcClient implements Injectable {
@@ -11,7 +11,8 @@ export declare class WalletJsonRpcClient implements Injectable {
      * This may be done through polling or websockets, but the user sees this as a
      * simple request/response.
      */
-    call(appId: string, req: JsonRpcRequest): Promise<JsonRpcResponse>;
+    callAsync(req: JsonRpcRequest): Promise<string>;
+    waitForResponse(requestId: string): Promise<any>;
     jsonRpcRes(res: any): any;
 }
 //# sourceMappingURL=WalletJsonRpcClient.d.ts.map

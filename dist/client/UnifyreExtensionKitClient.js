@@ -10,7 +10,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const ferrum_plumbing_1 = require("ferrum-plumbing");
-const SignableMessages_1 = require("../common/model/SignableMessages");
 function getAddressForCurrency(prof, currency, accountGroupId) {
     var _a;
     if (prof.accountGroups.length === 0) {
@@ -65,7 +64,7 @@ class UnifyreExtensionKitClient {
             return res;
         });
     }
-    sendMoney(toAddress, currency, amount, accountGroupId) {
+    sendMoneyAsync(toAddress, currency, amount, accountGroupId) {
         return __awaiter(this, void 0, void 0, function* () {
             ferrum_plumbing_1.ValidationUtils.isTrue(!!this.requestSigner, "'requestSigner' must be provided");
             const prof = this.getUserProfile();
@@ -83,11 +82,16 @@ class UnifyreExtensionKitClient {
                 },
             };
             const signedReq = this.requestSigner.signProxyRequest(req);
-            const res = yield this.walletProxy.call(this.appId, signedReq);
+            return yield this.walletProxy.callAsync(signedReq);
+        });
+    }
+    getSendMoneyResponse(requestId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const res = yield this.walletProxy.waitForResponse(requestId);
             return res.data;
         });
     }
-    sendTransaction(network, transactions) {
+    sendTransactionAsync(network, transactions) {
         return __awaiter(this, void 0, void 0, function* () {
             ferrum_plumbing_1.ValidationUtils.isTrue(!!this.requestSigner, "'requestSigner' must be provided");
             ferrum_plumbing_1.ValidationUtils.isTrue(!!network, '"network" must be provided');
@@ -106,33 +110,40 @@ class UnifyreExtensionKitClient {
                 },
             };
             const signedReq = this.requestSigner.signProxyRequest(req);
-            const res = yield this.walletProxy.call(this.appId, signedReq);
-            return res.data;
+            return yield this.walletProxy.callAsync(signedReq);
         });
     }
-    sign(network, messageHex, messageType, description, accountGroupId) {
+    getSendTransactionResponse(requestId) {
         return __awaiter(this, void 0, void 0, function* () {
-            ferrum_plumbing_1.ValidationUtils.isTrue(!!this.requestSigner, "'requestSigner' must be provided");
-            ferrum_plumbing_1.ValidationUtils.isTrue(!!messageHex, '"message" must be provided');
-            ferrum_plumbing_1.ValidationUtils.isTrue(SignableMessages_1.SIGNABLE_MESSAGE_TYPES.has(messageType), 'Invalid "messageType"');
-            const prof = this.getUserProfile();
-            const req = {
-                command: messageType === 'PLAIN_TEXT' ? 'REQUEST_SIGN_CLEAN_MESSAGE' : 'REQUEST_SIGN_CUSTOM_MESSAGE',
-                data: {
-                    network,
-                    userId: prof.userId,
-                    appId: prof.appId,
-                    accountGroupId,
-                    messageHex,
-                    messageType,
-                    description,
-                },
-            };
-            const signedReq = this.requestSigner.signProxyRequest(req);
-            const res = yield this.walletProxy.call(this.appId, signedReq);
+            const res = yield this.walletProxy.waitForResponse(requestId);
             return res.data;
         });
     }
+    // async sign(network: Network,
+    //            messageHex: HexString,
+    //            messageType: SignableMessageType,
+    //            description?: string,
+    //            accountGroupId?: string): Promise<SignedMessageResponse> {
+    //   ValidationUtils.isTrue(!!this.requestSigner, "'requestSigner' must be provided");
+    //   ValidationUtils.isTrue(!!messageHex, '"message" must be provided');
+    //   ValidationUtils.isTrue(SIGNABLE_MESSAGE_TYPES.has(messageType), 'Invalid "messageType"');
+    //   const prof = this.getUserProfile();
+    //   const req = {
+    //     command: messageType === 'PLAIN_TEXT' ? 'REQUEST_SIGN_CLEAN_MESSAGE' : 'REQUEST_SIGN_CUSTOM_MESSAGE',
+    //     data: {
+    //       network,
+    //       userId: prof.userId,
+    //       appId: prof.appId,
+    //       accountGroupId,
+    //       messageHex,
+    //       messageType,
+    //       description,
+    //     } as any,
+    //   } as JsonRpcRequest;
+    //   const signedReq = this.requestSigner!.signProxyRequest(req);
+    //   const res = await this.walletProxy.call(this.appId, signedReq);
+    //   return res.data as SignedMessageResponse;
+    // }
     getTransaction(transactionId) {
         return __awaiter(this, void 0, void 0, function* () {
             return this.api.get(`extension/transaction/${transactionId}`, {});

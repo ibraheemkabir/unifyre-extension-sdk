@@ -21,9 +21,14 @@ class WalletJsonRpcClient {
      * This may be done through polling or websockets, but the user sees this as a
      * simple request/response.
      */
-    call(appId, req) {
+    callAsync(req) {
         return __awaiter(this, void 0, void 0, function* () {
             const { requestId } = this.jsonRpcRes(yield this.api.post('extension/walletProxy/createRequest', req));
+            return requestId;
+        });
+    }
+    waitForResponse(requestId) {
+        return __awaiter(this, void 0, void 0, function* () {
             const pRes = yield this.repeater.registerPromise((id) => __awaiter(this, void 0, void 0, function* () {
                 const res = yield this.api.get(`extension/walletProxy/getResponse/${requestId}`, {});
                 if (res && res.data && Object.keys(res.data).length) {
