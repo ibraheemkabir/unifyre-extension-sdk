@@ -13,6 +13,7 @@ export * from './common/model/WebSocketMessage';
 // Client
 export * from './client/ClientModule';
 export * from './client/UnifyreExtensionKitClient';
+export * from './crypto/RequestSigner';
 
 
 // Wallet

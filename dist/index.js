@@ -14,6 +14,7 @@ __export(require("./common/model/SignableMessages"));
 // Client
 __export(require("./client/ClientModule"));
 __export(require("./client/UnifyreExtensionKitClient"));
+__export(require("./crypto/RequestSigner"));
 // Wallet
 __export(require("./wallet/WalletModule"));
 __export(require("./wallet/WalletRemoteRequestClient"));
