@@ -1,5 +1,20 @@
 import {HexString} from "ferrum-plumbing";
 
+export interface GasParameters {
+  gasLimit: string;
+  gasPrice: string;
+}
+
+export interface CustomTransactionCallRequest {
+  from: string;
+  contract: string;
+  amount: string;
+  data: string;
+  gas: GasParameters;
+  nonce?: number;
+  description?: string;
+}
+
 export interface SendMoneyResponse {
   transactionId: string;
 }
