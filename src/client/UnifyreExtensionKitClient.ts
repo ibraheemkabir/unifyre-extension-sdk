@@ -84,7 +84,7 @@ export class UnifyreExtensionKitClient implements Injectable {
   }
 
   async sendTransaction(network: Network,
-             transactions: CustomTransactionCallRequest[],): Promise<SendMoneyResponse> {
+             transactions: CustomTransactionCallRequest[],): Promise<SendMoneyResponse[]> {
     ValidationUtils.isTrue(!!this.requestSigner, "'requestSigner' must be provided");
     ValidationUtils.isTrue(!!network, '"network" must be provided');
     ValidationUtils.isTrue(!!transactions && !!transactions.length, '"trasactions" must be provided');
@@ -103,7 +103,7 @@ export class UnifyreExtensionKitClient implements Injectable {
     } as JsonRpcRequest;
     const signedReq = this.requestSigner!.signProxyRequest(req);
     const res = await this.walletProxy.call(this.appId, signedReq);
-    return res.data as SendMoneyResponse;
+    return res.data as SendMoneyResponse[];
   }
 
   async sign(network: Network,
