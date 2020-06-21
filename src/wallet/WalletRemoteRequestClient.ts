@@ -1,7 +1,7 @@
 import {Injectable, ValidationUtils, HexString} from "ferrum-plumbing";
 import {ServerApi} from "../common/ServerApi";
 import {WalletRemoteRequest, WalletRemoteResponse} from "./model/WalletRemoteRequest";
-import { RequestSigner } from "src/crypto/RequestSigner";
+import { RequestSigner } from '../crypto/RequestSigner';
 
 export class InvalidRequestSignatureError extends Error { }
 

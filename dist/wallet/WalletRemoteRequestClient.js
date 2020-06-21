@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const ferrum_plumbing_1 = require("ferrum-plumbing");
-const RequestSigner_1 = require("src/crypto/RequestSigner");
+const RequestSigner_1 = require("../crypto/RequestSigner");
 class InvalidRequestSignatureError extends Error {
 }
 exports.InvalidRequestSignatureError = InvalidRequestSignatureError;
