@@ -36,10 +36,11 @@ export class RequestSigner implements Injectable {
 
 function objToStrSorted(obj: any): string {
     if (typeof obj !== 'object') {
+        if (obj === undefined) { return ''; }
         return obj.toString();
     }
     const dataKeys = Object.keys(obj).sort();
-    return dataKeys.map(k => `${k.toString()}=${(objToStrSorted(obj[k]||'')).toString()}` ).join('&');
+    return dataKeys.map(k => `${k.toString()}=${(objToStrSorted(obj[k])).toString()}` ).join('&');
 }
 
 const TIMESTAMP_RANGE = 10 * 60 * 1000;
