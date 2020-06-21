@@ -1,6 +1,6 @@
 import { HexString, Network } from "ferrum-plumbing";
 import { SignableMessageType } from "../../common/model/SignableMessages";
-import { SendMoneyResponse, SignedMessageResponse } from "../../common/model/Types";
+import { SendMoneyResponse, SignedMessageResponse, CustomTransactionCallRequest } from "../../common/model/Types";
 export interface RemoteSendMoneyRequest {
     accountGroupId?: string;
     currency: string;
@@ -15,6 +15,12 @@ export interface RemoteSignRequest {
     messageType: SignableMessageType;
     description?: string;
 }
+export interface RemoteSendCustomTransactionRequest {
+    network: string;
+    appId: string;
+    userId: string;
+    transactions: CustomTransactionCallRequest[];
+}
 export interface WalletRemoteRequest {
     requestId: string;
     appId: string;
@@ -24,7 +30,7 @@ export interface WalletRemoteRequest {
 export interface WalletRemoteResponse {
     requestId: string;
     appId: string;
-    response: SendMoneyResponse | SignedMessageResponse;
+    response: SendMoneyResponse | SignedMessageResponse | SendMoneyResponse[];
     rejected: boolean;
     reason?: string;
 }
