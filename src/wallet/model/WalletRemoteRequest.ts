@@ -21,7 +21,11 @@ export interface RemoteSignRequest {
 export interface WalletRemoteRequest {
   requestId: string;
   appId: string;
-  requestType: 'REQUEST_SIGN_CLEAN_MESSAGE'|'REQUEST_SIGN_TYPED_MESSAGE'|'REQUEST_SEND_MONEY'|'REQUEST_SIGN_CUSTOM_MESSAGE';
+  requestType: 'REQUEST_SIGN_CLEAN_MESSAGE' | 
+    'REQUEST_SIGN_TYPED_MESSAGE' | 
+    'REQUEST_SEND_MONEY' | 
+    'REQUEST_SIGN_CUSTOM_MESSAGE' |
+    'REQUEST_SIGN_CUSTOM_TRANSACTION';
   request: RemoteSendMoneyRequest | RemoteSignRequest
 }
 
