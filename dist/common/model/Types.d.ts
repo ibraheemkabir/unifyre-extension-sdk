@@ -24,5 +24,5 @@ export interface SignedRawDataResponse {
     };
     publicKeyHex: HexString;
 }
-export declare type SignedMessageResponse = SignedRawDataResponse | SendMoneyResponse;
+export declare type SignedMessageResponse = SignedRawDataResponse | SendMoneyResponse | SendMoneyResponse[];
 //# sourceMappingURL=Types.d.ts.map

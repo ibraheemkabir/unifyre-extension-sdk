@@ -25,4 +25,4 @@ export interface SignedRawDataResponse {
   publicKeyHex: HexString;
 }
 
-export type SignedMessageResponse = SignedRawDataResponse | SendMoneyResponse;
+export type SignedMessageResponse = SignedRawDataResponse | SendMoneyResponse | SendMoneyResponse[];
