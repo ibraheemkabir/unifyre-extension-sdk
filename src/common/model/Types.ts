@@ -24,6 +24,7 @@ export interface CustomTransactionCallResponse {
   requestId: string;
   rejected: boolean;
   response: SendMoneyResponse[];
+  reason?: string;
 }
 
 export interface SignedRawDataResponse {
