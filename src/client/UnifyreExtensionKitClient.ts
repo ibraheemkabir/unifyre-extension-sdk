@@ -2,7 +2,7 @@ import {Injectable, JsonRpcRequest, Network, ValidationUtils} from "ferrum-plumb
 import {ServerApi} from "../common/ServerApi";
 import {WalletJsonRpcClient} from "./WalletJsonRpcClient";
 import {AppUserProfile} from "./model/AppUserProfile";
-import {SendMoneyResponse, CustomTransactionCallRequest} from "../common/model/Types";
+import {SendMoneyResponse, CustomTransactionCallRequest, CustomTransactionCallResponse} from "../common/model/Types";
 import { AppLinkRequest } from "./model/AppLink";
 import { RequestSigner } from "src/crypto/RequestSigner";
 
@@ -48,7 +48,7 @@ export class UnifyreExtensionKitClient implements Injectable {
       '"linkObject.data" must be provided and be an object');
     ValidationUtils.isTrue(!!linkObject.message, '"message" must be provided');
     ValidationUtils.isTrue(!!linkObject.imageMainLine, '"imageMainLine" must be provided');
-    ValidationUtils.isTrue(!!linkObject.imageSecondLine, '"imageSecondLinke" must be provided');
+    ValidationUtils.isTrue(!!linkObject.imageSecondLine, '"imageSecondLine" must be provided');
     const res = await this.api.post(`extension/createLink`, {...linkObject, appId: this.appId}) as any;
     ValidationUtils.isTrue(!!res && !!(res.data || {}).objectId, "Error creating link. Unsuccessful");
     return res.data.objectId;
@@ -108,9 +108,9 @@ export class UnifyreExtensionKitClient implements Injectable {
     return await this.walletProxy.callAsync(signedReq);
   }
 
-  async getSendTransactionResponse(requestId: string): Promise<SendMoneyResponse[]> {
-    const res = await this.walletProxy.waitForResponse(requestId);
-    return res.data as SendMoneyResponse[];
+  async getSendTransactionResponse(requestId: string, timeout?: number): Promise<CustomTransactionCallResponse> {
+    const res = await this.walletProxy.waitForResponse(requestId, timeout);
+    return res.data;
   }
 
   // async sign(network: Network,

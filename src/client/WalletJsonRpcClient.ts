@@ -18,7 +18,7 @@ export class WalletJsonRpcClient implements Injectable {
     return requestId;
   }
 
-  async waitForResponse(requestId: string) {
+  async waitForResponse(requestId: string, timeout?: number) {
     const pRes = await this.repeater.registerPromise(async (id: number) => {
       const res = await this.api.get(`extension/walletProxy/getResponse/${requestId}`, {}) as any;
       if (res && res.data && Object.keys(res.data).length) {
@@ -26,7 +26,7 @@ export class WalletJsonRpcClient implements Injectable {
       } else {
         return
       }
-    });
+    }, timeout);
     return pRes;
   }
 

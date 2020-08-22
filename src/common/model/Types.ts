@@ -20,6 +20,12 @@ export interface SendMoneyResponse {
   transactionId: string;
 }
 
+export interface CustomTransactionCallResponse {
+  requestId: string;
+  rejected: boolean;
+  response: SendMoneyResponse[];
+}
+
 export interface SignedRawDataResponse {
   signature: { r: HexString, s: HexString, v: number};
   publicKeyHex: HexString;
