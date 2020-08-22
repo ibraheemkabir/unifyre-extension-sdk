@@ -12,7 +12,7 @@ export declare class WalletJsonRpcClient implements Injectable {
      * simple request/response.
      */
     callAsync(req: JsonRpcRequest): Promise<string>;
-    waitForResponse(requestId: string): Promise<any>;
+    waitForResponse(requestId: string, timeout?: number): Promise<any>;
     jsonRpcRes(res: any): any;
 }
 //# sourceMappingURL=WalletJsonRpcClient.d.ts.map

@@ -50,7 +50,7 @@ class UnifyreExtensionKitClient {
             ferrum_plumbing_1.ValidationUtils.isTrue(!!linkObject.data && typeof linkObject.data === 'object', '"linkObject.data" must be provided and be an object');
             ferrum_plumbing_1.ValidationUtils.isTrue(!!linkObject.message, '"message" must be provided');
             ferrum_plumbing_1.ValidationUtils.isTrue(!!linkObject.imageMainLine, '"imageMainLine" must be provided');
-            ferrum_plumbing_1.ValidationUtils.isTrue(!!linkObject.imageSecondLine, '"imageSecondLinke" must be provided');
+            ferrum_plumbing_1.ValidationUtils.isTrue(!!linkObject.imageSecondLine, '"imageSecondLine" must be provided');
             const res = yield this.api.post(`extension/createLink`, Object.assign(Object.assign({}, linkObject), { appId: this.appId }));
             ferrum_plumbing_1.ValidationUtils.isTrue(!!res && !!(res.data || {}).objectId, "Error creating link. Unsuccessful");
             return res.data.objectId;
@@ -113,9 +113,9 @@ class UnifyreExtensionKitClient {
             return yield this.walletProxy.callAsync(signedReq);
         });
     }
-    getSendTransactionResponse(requestId) {
+    getSendTransactionResponse(requestId, timeout) {
         return __awaiter(this, void 0, void 0, function* () {
-            const res = yield this.walletProxy.waitForResponse(requestId);
+            const res = yield this.walletProxy.waitForResponse(requestId, timeout);
             return res.data;
         });
     }

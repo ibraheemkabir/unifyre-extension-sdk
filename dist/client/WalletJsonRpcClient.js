@@ -27,7 +27,7 @@ class WalletJsonRpcClient {
             return requestId;
         });
     }
-    waitForResponse(requestId) {
+    waitForResponse(requestId, timeout) {
         return __awaiter(this, void 0, void 0, function* () {
             const pRes = yield this.repeater.registerPromise((id) => __awaiter(this, void 0, void 0, function* () {
                 const res = yield this.api.get(`extension/walletProxy/getResponse/${requestId}`, {});
@@ -37,7 +37,7 @@ class WalletJsonRpcClient {
                 else {
                     return;
                 }
-            }));
+            }), timeout);
             return pRes;
         });
     }
