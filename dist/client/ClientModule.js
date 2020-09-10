@@ -27,7 +27,7 @@ class ClientModule {
     configAsync(c) {
         return __awaiter(this, void 0, void 0, function* () {
             c.registerSingleton(AuthenticationContext_1.AuthenticationContext, () => new AuthenticationContext_1.AuthenticationContext());
-            c.registerSingleton(UnifyreExtensionKitClient_1.UnifyreExtensionKitClient, c => new UnifyreExtensionKitClient_1.UnifyreExtensionKitClient(c.get(ServerApi_1.ServerApi), c.get(WalletJsonRpcClient_1.WalletJsonRpcClient), this.appId));
+            c.registerSingleton(UnifyreExtensionKitClient_1.UnifyreExtensionKitClient, c => new UnifyreExtensionKitClient_1.UnifyreExtensionKitClientImpl(c.get(ServerApi_1.ServerApi), c.get(WalletJsonRpcClient_1.WalletJsonRpcClient), this.appId));
             c.registerSingleton(ServerApi_1.ServerApi, c => new ServerApi_1.ServerApi(c.get('JsonStorage'), c.get(ferrum_plumbing_1.LoggerFactory), c.get(AuthenticationContext_1.AuthenticationContext), this.apiUrl));
             c.registerSingleton(AsyncRequestRepeater_1.AsyncRequestRepeater, () => new AsyncRequestRepeater_1.AsyncRequestRepeater());
             c.register(WalletJsonRpcClient_1.WalletJsonRpcClient, c => new WalletJsonRpcClient_1.WalletJsonRpcClient(c.get(ServerApi_1.ServerApi), c.get(AsyncRequestRepeater_1.AsyncRequestRepeater)));

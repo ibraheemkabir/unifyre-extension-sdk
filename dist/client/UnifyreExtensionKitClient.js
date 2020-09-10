@@ -22,13 +22,18 @@ function getAddressForCurrency(prof, currency, accountGroupId) {
     return (_a = ag.addresses.find(a => a.currency === currency)) === null || _a === void 0 ? void 0 : _a.address;
 }
 class UnifyreExtensionKitClient {
+    constructor() { }
+    __name__() { return 'UnifyreExtensionKitClient'; }
+}
+exports.UnifyreExtensionKitClient = UnifyreExtensionKitClient;
+class UnifyreExtensionKitClientImpl extends UnifyreExtensionKitClient {
     constructor(api, walletProxy, appId, requestSigner) {
+        super();
         this.api = api;
         this.walletProxy = walletProxy;
         this.appId = appId;
         this.requestSigner = requestSigner;
     }
-    __name__() { return 'UnifyreExtensionKitClient'; }
     setToken(token) {
         return __awaiter(this, void 0, void 0, function* () {
             yield this.api.setBearerToken(token);
@@ -150,5 +155,5 @@ class UnifyreExtensionKitClient {
         });
     }
 }
-exports.UnifyreExtensionKitClient = UnifyreExtensionKitClient;
+exports.UnifyreExtensionKitClientImpl = UnifyreExtensionKitClientImpl;
 //# sourceMappingURL=UnifyreExtensionKitClient.js.map

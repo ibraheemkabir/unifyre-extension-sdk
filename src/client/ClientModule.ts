@@ -1,6 +1,6 @@
 import {Container, LoggerFactory, Module} from "ferrum-plumbing";
 import {AuthenticationContext} from "../common/AuthenticationContext";
-import {UnifyreExtensionKitClient} from "./UnifyreExtensionKitClient";
+import {UnifyreExtensionKitClient, UnifyreExtensionKitClientImpl} from "./UnifyreExtensionKitClient";
 import {ServerApi} from "../common/ServerApi";
 import {WalletJsonRpcClient} from "./WalletJsonRpcClient";
 import {AsyncRequestRepeater} from "./AsyncRequestRepeater";
@@ -15,7 +15,7 @@ export class ClientModule implements Module {
 
   async configAsync(c: Container): Promise<void> {
     c.registerSingleton(AuthenticationContext, () => new AuthenticationContext());
-    c.registerSingleton(UnifyreExtensionKitClient, c => new UnifyreExtensionKitClient(
+    c.registerSingleton(UnifyreExtensionKitClient, c => new UnifyreExtensionKitClientImpl(
       c.get(ServerApi), c.get(WalletJsonRpcClient), this.appId));
     c.registerSingleton(ServerApi, c => new ServerApi(c.get('JsonStorage'),
       c.get(LoggerFactory), c.get(AuthenticationContext), this.apiUrl));

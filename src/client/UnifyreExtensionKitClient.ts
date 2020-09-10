@@ -17,16 +17,44 @@ function getAddressForCurrency(prof: AppUserProfile, currency: string, accountGr
   return ag.addresses.find(a => a.currency === currency)?.address;
 }
 
-export class UnifyreExtensionKitClient implements Injectable {
+export abstract class UnifyreExtensionKitClient implements Injectable {
+  constructor() { }
+
+  __name__() { return 'UnifyreExtensionKitClient'; }
+
+  abstract setToken(token: string): Promise<void>;
+
+  abstract signInWithToken(token: string): Promise<void>;
+
+  abstract getUserProfile(): AppUserProfile;
+
+  abstract createLinkObject<T>(linkObject: AppLinkRequest<T>): Promise<string>;
+
+  abstract getLinkObject<T>(linkId: string): Promise<T>;
+
+  abstract sendMoneyAsync(
+    toAddress: string, currency: string, amount: string, accountGroupId?: string): Promise<string>;
+
+  abstract getSendMoneyResponse(requestId: string): Promise<SendMoneyResponse>;
+
+  abstract sendTransactionAsync(network: Network,
+             transactions: CustomTransactionCallRequest[],): Promise<string>;
+
+  abstract getSendTransactionResponse(requestId: string, timeout?: number): Promise<CustomTransactionCallResponse>;
+
+  abstract getTransaction(transactionId: string): Promise<any>;
+}
+
+export class UnifyreExtensionKitClientImpl extends UnifyreExtensionKitClient {
   private _userProfile: AppUserProfile|undefined;
   constructor(
     private api: ServerApi,
     private walletProxy: WalletJsonRpcClient,
     private appId: string,
     private requestSigner?: RequestSigner,
-  ) {}
-
-  __name__(): string { return 'UnifyreExtensionKitClient'; }
+  ) {
+    super();
+  }
 
   async setToken(token: string) {
     await this.api.setBearerToken(token);
