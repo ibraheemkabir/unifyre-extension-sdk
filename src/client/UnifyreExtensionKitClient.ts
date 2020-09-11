@@ -26,7 +26,7 @@ export abstract class UnifyreExtensionKitClient implements Injectable {
 
   abstract signInWithToken(token: string): Promise<void>;
 
-  abstract getUserProfile(): AppUserProfile;
+  abstract getUserProfile(): Promise<AppUserProfile>;
 
   abstract createLinkObject<T>(linkObject: AppLinkRequest<T>): Promise<string>;
 
@@ -65,7 +65,7 @@ export class UnifyreExtensionKitClientImpl extends UnifyreExtensionKitClient {
     this._userProfile = await this.api.get('extension/userProfile', {}) as AppUserProfile
   }
 
-  getUserProfile() {
+  async getUserProfile() {
     ValidationUtils.isTrue(!!this._userProfile, 'You must first sign in');
     return this._userProfile!;
   }
@@ -91,7 +91,7 @@ export class UnifyreExtensionKitClientImpl extends UnifyreExtensionKitClient {
 
   async sendMoneyAsync(toAddress: string, currency: string, amount: string, accountGroupId?: string): Promise<string> {
     ValidationUtils.isTrue(!!this.requestSigner, "'requestSigner' must be provided");
-    const prof = this.getUserProfile();
+    const prof = await this.getUserProfile();
     const fromAddress = getAddressForCurrency(prof, currency, accountGroupId);
     const req = {
       command: 'REQUEST_SEND_MONEY',
@@ -122,7 +122,7 @@ export class UnifyreExtensionKitClientImpl extends UnifyreExtensionKitClient {
     transactions.forEach(t => {
       ValidationUtils.isTrue(!!t.gas && !!t.gas.gasLimit, '"gasLimit" must be provided');
     });
-    const prof = this.getUserProfile();
+    const prof = await this.getUserProfile();
     const req = {
       command: 'REQUEST_SIGN_CUSTOM_TRANSACTION',
       data: {

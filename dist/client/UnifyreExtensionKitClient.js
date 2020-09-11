@@ -46,8 +46,10 @@ class UnifyreExtensionKitClientImpl extends UnifyreExtensionKitClient {
         });
     }
     getUserProfile() {
-        ferrum_plumbing_1.ValidationUtils.isTrue(!!this._userProfile, 'You must first sign in');
-        return this._userProfile;
+        return __awaiter(this, void 0, void 0, function* () {
+            ferrum_plumbing_1.ValidationUtils.isTrue(!!this._userProfile, 'You must first sign in');
+            return this._userProfile;
+        });
     }
     createLinkObject(linkObject) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -72,7 +74,7 @@ class UnifyreExtensionKitClientImpl extends UnifyreExtensionKitClient {
     sendMoneyAsync(toAddress, currency, amount, accountGroupId) {
         return __awaiter(this, void 0, void 0, function* () {
             ferrum_plumbing_1.ValidationUtils.isTrue(!!this.requestSigner, "'requestSigner' must be provided");
-            const prof = this.getUserProfile();
+            const prof = yield this.getUserProfile();
             const fromAddress = getAddressForCurrency(prof, currency, accountGroupId);
             const req = {
                 command: 'REQUEST_SEND_MONEY',
@@ -104,7 +106,7 @@ class UnifyreExtensionKitClientImpl extends UnifyreExtensionKitClient {
             transactions.forEach(t => {
                 ferrum_plumbing_1.ValidationUtils.isTrue(!!t.gas && !!t.gas.gasLimit, '"gasLimit" must be provided');
             });
-            const prof = this.getUserProfile();
+            const prof = yield this.getUserProfile();
             const req = {
                 command: 'REQUEST_SIGN_CUSTOM_TRANSACTION',
                 data: {

@@ -10,7 +10,7 @@ export declare abstract class UnifyreExtensionKitClient implements Injectable {
     __name__(): string;
     abstract setToken(token: string): Promise<void>;
     abstract signInWithToken(token: string): Promise<void>;
-    abstract getUserProfile(): AppUserProfile;
+    abstract getUserProfile(): Promise<AppUserProfile>;
     abstract createLinkObject<T>(linkObject: AppLinkRequest<T>): Promise<string>;
     abstract getLinkObject<T>(linkId: string): Promise<T>;
     abstract sendMoneyAsync(toAddress: string, currency: string, amount: string, accountGroupId?: string): Promise<string>;
@@ -28,7 +28,7 @@ export declare class UnifyreExtensionKitClientImpl extends UnifyreExtensionKitCl
     constructor(api: ServerApi, walletProxy: WalletJsonRpcClient, appId: string, requestSigner?: RequestSigner | undefined);
     setToken(token: string): Promise<void>;
     signInWithToken(token: string): Promise<void>;
-    getUserProfile(): AppUserProfile;
+    getUserProfile(): Promise<AppUserProfile>;
     createLinkObject<T>(linkObject: AppLinkRequest<T>): Promise<string>;
     getLinkObject<T>(linkId: string): Promise<T>;
     sendMoneyAsync(toAddress: string, currency: string, amount: string, accountGroupId?: string): Promise<string>;
