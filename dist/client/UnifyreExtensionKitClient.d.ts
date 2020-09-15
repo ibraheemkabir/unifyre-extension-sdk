@@ -13,9 +13,9 @@ export declare abstract class UnifyreExtensionKitClient implements Injectable {
     abstract getUserProfile(): Promise<AppUserProfile>;
     abstract createLinkObject<T>(linkObject: AppLinkRequest<T>): Promise<string>;
     abstract getLinkObject<T>(linkId: string): Promise<T>;
-    abstract sendMoneyAsync(toAddress: string, currency: string, amount: string, accountGroupId?: string): Promise<string>;
+    abstract sendMoneyAsync(toAddress: string, currency: string, amount: string, accountGroupId?: string, payload?: any): Promise<string>;
     abstract getSendMoneyResponse(requestId: string): Promise<SendMoneyResponse>;
-    abstract sendTransactionAsync(network: Network, transactions: CustomTransactionCallRequest[]): Promise<string>;
+    abstract sendTransactionAsync(network: Network, transactions: CustomTransactionCallRequest[], payload?: any): Promise<string>;
     abstract getSendTransactionResponse(requestId: string, timeout?: number): Promise<CustomTransactionCallResponse>;
     abstract getTransaction(transactionId: string): Promise<any>;
 }
@@ -31,9 +31,9 @@ export declare class UnifyreExtensionKitClientImpl extends UnifyreExtensionKitCl
     getUserProfile(): Promise<AppUserProfile>;
     createLinkObject<T>(linkObject: AppLinkRequest<T>): Promise<string>;
     getLinkObject<T>(linkId: string): Promise<T>;
-    sendMoneyAsync(toAddress: string, currency: string, amount: string, accountGroupId?: string): Promise<string>;
+    sendMoneyAsync(toAddress: string, currency: string, amount: string, accountGroupId?: string, payload?: any): Promise<string>;
     getSendMoneyResponse(requestId: string): Promise<SendMoneyResponse>;
-    sendTransactionAsync(network: Network, transactions: CustomTransactionCallRequest[]): Promise<string>;
+    sendTransactionAsync(network: Network, transactions: CustomTransactionCallRequest[], payload?: any): Promise<string>;
     getSendTransactionResponse(requestId: string, timeout?: number): Promise<CustomTransactionCallResponse>;
     getTransaction(transactionId: string): Promise<any>;
 }

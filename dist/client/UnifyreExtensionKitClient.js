@@ -71,7 +71,7 @@ class UnifyreExtensionKitClientImpl extends UnifyreExtensionKitClient {
             return res;
         });
     }
-    sendMoneyAsync(toAddress, currency, amount, accountGroupId) {
+    sendMoneyAsync(toAddress, currency, amount, accountGroupId, payload) {
         return __awaiter(this, void 0, void 0, function* () {
             ferrum_plumbing_1.ValidationUtils.isTrue(!!this.requestSigner, "'requestSigner' must be provided");
             const prof = yield this.getUserProfile();
@@ -86,6 +86,7 @@ class UnifyreExtensionKitClientImpl extends UnifyreExtensionKitClient {
                     toAddress,
                     amount,
                     accountGroupId,
+                    payload,
                 },
             };
             const signedReq = this.requestSigner.signProxyRequest(req);
@@ -98,7 +99,7 @@ class UnifyreExtensionKitClientImpl extends UnifyreExtensionKitClient {
             return res.data;
         });
     }
-    sendTransactionAsync(network, transactions) {
+    sendTransactionAsync(network, transactions, payload) {
         return __awaiter(this, void 0, void 0, function* () {
             ferrum_plumbing_1.ValidationUtils.isTrue(!!this.requestSigner, "'requestSigner' must be provided");
             ferrum_plumbing_1.ValidationUtils.isTrue(!!network, '"network" must be provided');
@@ -114,6 +115,7 @@ class UnifyreExtensionKitClientImpl extends UnifyreExtensionKitClient {
                     userId: prof.userId,
                     appId: prof.appId,
                     transactions,
+                    payload,
                 },
             };
             const signedReq = this.requestSigner.signProxyRequest(req);

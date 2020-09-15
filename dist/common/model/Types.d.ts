@@ -15,11 +15,13 @@ export interface CustomTransactionCallRequest {
 }
 export interface SendMoneyResponse {
     transactionId: string;
+    requestPayload?: string;
 }
 export interface CustomTransactionCallResponse {
     requestId: string;
     rejected: boolean;
     response: SendMoneyResponse[];
+    requestPayload?: any;
     reason?: string;
 }
 export interface SignedRawDataResponse {

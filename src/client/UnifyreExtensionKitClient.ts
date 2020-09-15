@@ -33,14 +33,18 @@ export abstract class UnifyreExtensionKitClient implements Injectable {
   abstract getLinkObject<T>(linkId: string): Promise<T>;
 
   abstract sendMoneyAsync(
-    toAddress: string, currency: string, amount: string, accountGroupId?: string): Promise<string>;
+    toAddress: string, currency: string, amount: string,
+    accountGroupId?: string, payload?: any): Promise<string>;
 
   abstract getSendMoneyResponse(requestId: string): Promise<SendMoneyResponse>;
 
   abstract sendTransactionAsync(network: Network,
-             transactions: CustomTransactionCallRequest[],): Promise<string>;
+             transactions: CustomTransactionCallRequest[],
+             payload?: any,
+             ): Promise<string>;
 
-  abstract getSendTransactionResponse(requestId: string, timeout?: number): Promise<CustomTransactionCallResponse>;
+  abstract getSendTransactionResponse(requestId: string,
+    timeout?: number): Promise<CustomTransactionCallResponse>;
 
   abstract getTransaction(transactionId: string): Promise<any>;
 }
@@ -89,7 +93,8 @@ export class UnifyreExtensionKitClientImpl extends UnifyreExtensionKitClient {
     return res;
   }
 
-  async sendMoneyAsync(toAddress: string, currency: string, amount: string, accountGroupId?: string): Promise<string> {
+  async sendMoneyAsync(toAddress: string, currency: string, amount: string,
+      accountGroupId?: string, payload?: any): Promise<string> {
     ValidationUtils.isTrue(!!this.requestSigner, "'requestSigner' must be provided");
     const prof = await this.getUserProfile();
     const fromAddress = getAddressForCurrency(prof, currency, accountGroupId);
@@ -103,6 +108,7 @@ export class UnifyreExtensionKitClientImpl extends UnifyreExtensionKitClient {
         toAddress,
         amount,
         accountGroupId,
+        payload,
       } as any,
     } as JsonRpcRequest;
     const signedReq = this.requestSigner!.signProxyRequest(req);
@@ -115,7 +121,9 @@ export class UnifyreExtensionKitClientImpl extends UnifyreExtensionKitClient {
   }
 
   async sendTransactionAsync(network: Network,
-             transactions: CustomTransactionCallRequest[],): Promise<string> {
+             transactions: CustomTransactionCallRequest[],
+             payload?: any,
+             ): Promise<string> {
     ValidationUtils.isTrue(!!this.requestSigner, "'requestSigner' must be provided");
     ValidationUtils.isTrue(!!network, '"network" must be provided');
     ValidationUtils.isTrue(!!transactions && !!transactions.length, '"trasactions" must be provided');
@@ -130,6 +138,7 @@ export class UnifyreExtensionKitClientImpl extends UnifyreExtensionKitClient {
         userId: prof.userId,
         appId: prof.appId,
         transactions,
+        payload,
       } as any,
     } as JsonRpcRequest;
     const signedReq = this.requestSigner!.signProxyRequest(req);
