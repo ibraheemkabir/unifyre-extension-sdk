@@ -44,12 +44,27 @@ export class ServerApiError extends Error {
   }
 }
 
+export interface ServerApiCustomizer {
+  startMetric(command: string): any;
+  endMetric(metric: any): void;
+  getCustomHeaders(command: string): any;
+  processCustomResult(res: any): Promise<any>;
+} 
+
+class DummyServerApiCustomizer implements ServerApiCustomizer {
+  startMetric(command: string) { return {}; }
+  endMetric(metric: any) { return; };
+  getCustomHeaders(command: string) { return {}; };
+  processCustomResult(res: any) { return Promise.resolve(); }
+}
+
 export class ServerApi implements Injectable {
   private log: Logger;
   constructor(private storage: JsonStorage,
               loggerFactory: LoggerFactory,
               private context: AuthenticationContext,
               private host: string,
+              private customizer: ServerApiCustomizer = new DummyServerApiCustomizer(),
   ) {
     this.log = loggerFactory.getLogger(ServerApi);
     ValidationUtils.isTrue(host.endsWith('/'), '"host" must end with slash (/)');
@@ -86,12 +101,12 @@ export class ServerApi implements Injectable {
 
     let res: any;
     try {
-      // const metricCommand = command.split('/')[0];
-      // const metric = this.metric.start(metricCommand);
+      const metric = this.customizer.startMetric(command);
       const headers = {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
         'Session': sessionHeader,
+        ...this.customizer.getCustomHeaders(command),
       } as any;
       if (bearerToken) {
         headers['Authorization'] = `Bearer ${bearerToken}`;
@@ -107,12 +122,16 @@ export class ServerApi implements Injectable {
         headers: headers,
         body: JSON.stringify(data),
       });
-      // this.log.info("Result is ", res);
-      // metric.done();
+      this.customizer.endMetric(metric);
     } catch (e) {
       const errorText = ServerApiError.fromError(e);
       this.log.error('Error calling server', e);
       throw new ServerApiError(0,errorText);
+    }
+
+    const customRes = await this.customizer.processCustomResult(res);
+    if (customRes) {
+      return customRes;
     }
 
     if (res.ok) {

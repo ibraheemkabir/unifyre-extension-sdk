@@ -55,11 +55,20 @@ class ServerApiError extends Error {
     }
 }
 exports.ServerApiError = ServerApiError;
+class DummyServerApiCustomizer {
+    startMetric(command) { return {}; }
+    endMetric(metric) { return; }
+    ;
+    getCustomHeaders(command) { return {}; }
+    ;
+    processCustomResult(res) { return Promise.resolve(); }
+}
 class ServerApi {
-    constructor(storage, loggerFactory, context, host) {
+    constructor(storage, loggerFactory, context, host, customizer = new DummyServerApiCustomizer()) {
         this.storage = storage;
         this.context = context;
         this.host = host;
+        this.customizer = customizer;
         this.log = loggerFactory.getLogger(ServerApi);
         ferrum_plumbing_1.ValidationUtils.isTrue(host.endsWith('/'), '"host" must end with slash (/)');
     }
@@ -94,13 +103,8 @@ class ServerApi {
             this.log.debug(`calling api '${this.host}${fullCommand}'`, data);
             let res;
             try {
-                // const metricCommand = command.split('/')[0];
-                // const metric = this.metric.start(metricCommand);
-                const headers = {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                    'Session': sessionHeader,
-                };
+                const metric = this.customizer.startMetric(command);
+                const headers = Object.assign({ 'Accept': 'application/json', 'Content-Type': 'application/json', 'Session': sessionHeader }, this.customizer.getCustomHeaders(command));
                 if (bearerToken) {
                     headers['Authorization'] = `Bearer ${bearerToken}`;
                 }
@@ -114,13 +118,16 @@ class ServerApi {
                     headers: headers,
                     body: JSON.stringify(data),
                 });
-                // this.log.info("Result is ", res);
-                // metric.done();
+                this.customizer.endMetric(metric);
             }
             catch (e) {
                 const errorText = ServerApiError.fromError(e);
                 this.log.error('Error calling server', e);
                 throw new ServerApiError(0, errorText);
+            }
+            const customRes = yield this.customizer.processCustomResult(res);
+            if (customRes) {
+                return customRes;
             }
             if (res.ok) {
                 const text = yield res.text();

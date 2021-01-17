@@ -12,12 +12,19 @@ export declare class ServerApiError extends Error {
     static stringify(e: Error): string;
     private static cleanError;
 }
+export interface ServerApiCustomizer {
+    startMetric(command: string): any;
+    endMetric(metric: any): void;
+    getCustomHeaders(command: string): any;
+    processCustomResult(res: any): Promise<any>;
+}
 export declare class ServerApi implements Injectable {
     private storage;
     private context;
     private host;
+    private customizer;
     private log;
-    constructor(storage: JsonStorage, loggerFactory: LoggerFactory, context: AuthenticationContext, host: string);
+    constructor(storage: JsonStorage, loggerFactory: LoggerFactory, context: AuthenticationContext, host: string, customizer?: ServerApiCustomizer);
     __name__(): string;
     /**
      * Authenticate user using provided token
