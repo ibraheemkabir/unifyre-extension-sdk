@@ -48,14 +48,14 @@ export interface ServerApiCustomizer {
   startMetric(command: string): any;
   endMetric(metric: any): void;
   getCustomHeaders(command: string): any;
-  processCustomResult(res: any): Promise<any>;
+  processCustomResult(res: any): Promise<'retry' | 'ok'>;
 } 
 
 class DummyServerApiCustomizer implements ServerApiCustomizer {
   startMetric(command: string) { return {}; }
   endMetric(metric: any) { return; };
   getCustomHeaders(command: string) { return {}; };
-  processCustomResult(res: any) { return Promise.resolve(); }
+  processCustomResult(res: any) { return Promise.resolve<'retry'|'ok'>('ok'); }
 }
 
 export class ServerApi implements Injectable {
@@ -88,7 +88,8 @@ export class ServerApi implements Injectable {
   }
 
   private async fetchUrl(command: string, method: string, args: { [x: string]: any },
-                         data?: Object, extraHeaders?: ServerApiHeaders): Promise<Object> {
+                         data?: Object, extraHeaders?: ServerApiHeaders,
+                         retry: number=0): Promise<Object> {
     let fullCommand = args && Object.keys(args).length ?
       command + '?' + Object.keys(args)
         .map(k => encodeURIComponent(k) + '=' + encodeURIComponent(args[k]))
@@ -127,6 +128,10 @@ export class ServerApi implements Injectable {
       const errorText = ServerApiError.fromError(e);
       this.log.error('Error calling server', e);
       throw new ServerApiError(0,errorText);
+    }
+
+    if ((await this.customizer.processCustomResult(res)) === 'retry' && retry < 3) {
+        return this.fetchUrl(command, method, args, data, extraHeaders, retry + 1);
     }
 
     const customRes = await this.customizer.processCustomResult(res);

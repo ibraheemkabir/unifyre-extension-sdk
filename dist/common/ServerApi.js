@@ -61,7 +61,7 @@ class DummyServerApiCustomizer {
     ;
     getCustomHeaders(command) { return {}; }
     ;
-    processCustomResult(res) { return Promise.resolve(); }
+    processCustomResult(res) { return Promise.resolve('ok'); }
 }
 class ServerApi {
     constructor(storage, loggerFactory, context, host, customizer = new DummyServerApiCustomizer()) {
@@ -91,7 +91,7 @@ class ServerApi {
             return this.fetchUrl(command, 'GET', args, undefined, extraHeaders);
         });
     }
-    fetchUrl(command, method, args, data, extraHeaders) {
+    fetchUrl(command, method, args, data, extraHeaders, retry = 0) {
         return __awaiter(this, void 0, void 0, function* () {
             let fullCommand = args && Object.keys(args).length ?
                 command + '?' + Object.keys(args)
@@ -124,6 +124,9 @@ class ServerApi {
                 const errorText = ServerApiError.fromError(e);
                 this.log.error('Error calling server', e);
                 throw new ServerApiError(0, errorText);
+            }
+            if ((yield this.customizer.processCustomResult(res)) === 'retry' && retry < 3) {
+                return this.fetchUrl(command, method, args, data, extraHeaders, retry + 1);
             }
             const customRes = yield this.customizer.processCustomResult(res);
             if (customRes) {
