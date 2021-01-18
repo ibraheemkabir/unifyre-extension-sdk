@@ -6,7 +6,6 @@ export class ServerApiHeaders {
   [key: string]: string | number;
 }
 
-// TODO: Add metrics
 export class ServerApiError extends Error {
   constructor(public status: number, public message: string) {
     super(message);
@@ -48,7 +47,7 @@ export interface ServerApiCustomizer {
   startMetric(command: string): any;
   endMetric(metric: any): void;
   getCustomHeaders(command: string): any;
-  processCustomResult(res: any): Promise<'retry' | 'ok'>;
+  processCustomResult(httpStatus: number, resText: string): Promise<'retry' | 'ok'>;
 } 
 
 class DummyServerApiCustomizer implements ServerApiCustomizer {
@@ -117,12 +116,11 @@ export class ServerApi implements Injectable {
       }
       this.log.debug('Headers are', headers);
 
-      // @ts-ignore
       res = await fetch(this.host + fullCommand, {
         method: method,
         headers: headers,
         body: JSON.stringify(data),
-      });
+      } as any);
       this.customizer.endMetric(metric);
     } catch (e) {
       const errorText = ServerApiError.fromError(e);
@@ -130,20 +128,15 @@ export class ServerApi implements Injectable {
       throw new ServerApiError(0,errorText);
     }
 
-    if ((await this.customizer.processCustomResult(res)) === 'retry' && retry < 3) {
+    const text = await res!.text();
+    if ((await this.customizer.processCustomResult(res!.status, text)) === 'retry' && retry < 3) {
         return this.fetchUrl(command, method, args, data, extraHeaders, retry + 1);
     }
 
-    const customRes = await this.customizer.processCustomResult(res);
-    if (customRes) {
-      return customRes;
-    }
-
     if (res.ok) {
-      const text = await res.text();
       return text ? JSON.parse(text) : {};
     } else {
-      const errorText = await res.text();
+      const errorText = text;
       this.log.error('Error calling server' + command + args + res.status + res.statusText + errorText);
       throw new ServerApiError(res.status, errorText);
     }

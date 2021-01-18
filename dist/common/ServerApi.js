@@ -17,7 +17,6 @@ const cross_fetch_1 = __importDefault(require("cross-fetch"));
 class ServerApiHeaders {
 }
 exports.ServerApiHeaders = ServerApiHeaders;
-// TODO: Add metrics
 class ServerApiError extends Error {
     constructor(status, message) {
         super(message);
@@ -112,7 +111,6 @@ class ServerApi {
                     Object.keys(extraHeaders).forEach(k => { headers[k] = extraHeaders[k]; });
                 }
                 this.log.debug('Headers are', headers);
-                // @ts-ignore
                 res = yield cross_fetch_1.default(this.host + fullCommand, {
                     method: method,
                     headers: headers,
@@ -125,19 +123,15 @@ class ServerApi {
                 this.log.error('Error calling server', e);
                 throw new ServerApiError(0, errorText);
             }
-            if ((yield this.customizer.processCustomResult(res)) === 'retry' && retry < 3) {
+            const text = yield res.text();
+            if ((yield this.customizer.processCustomResult(res.status, text)) === 'retry' && retry < 3) {
                 return this.fetchUrl(command, method, args, data, extraHeaders, retry + 1);
             }
-            const customRes = yield this.customizer.processCustomResult(res);
-            if (customRes) {
-                return customRes;
-            }
             if (res.ok) {
-                const text = yield res.text();
                 return text ? JSON.parse(text) : {};
             }
             else {
-                const errorText = yield res.text();
+                const errorText = text;
                 this.log.error('Error calling server' + command + args + res.status + res.statusText + errorText);
                 throw new ServerApiError(res.status, errorText);
             }

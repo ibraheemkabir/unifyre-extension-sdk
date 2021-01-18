@@ -16,7 +16,7 @@ export interface ServerApiCustomizer {
     startMetric(command: string): any;
     endMetric(metric: any): void;
     getCustomHeaders(command: string): any;
-    processCustomResult(res: any): Promise<'retry' | 'ok'>;
+    processCustomResult(httpStatus: number, resText: string): Promise<'retry' | 'ok'>;
 }
 export declare class ServerApi implements Injectable {
     private storage;
