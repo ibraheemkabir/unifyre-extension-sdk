@@ -14,6 +14,7 @@ export interface CustomTransactionCallRequest {
   gas: GasParameters;
   nonce?: number;
   description?: string;
+  value?: string;
 }
 
 export interface SendMoneyResponse {
