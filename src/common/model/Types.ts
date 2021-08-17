@@ -2,7 +2,7 @@ import {HexString} from "ferrum-plumbing";
 
 export interface GasParameters {
   gasLimit: string;
-  gasPrice: string;
+  gasPrice?: string;
 }
 
 export interface CustomTransactionCallRequest {
